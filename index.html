@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>BYTEVAULT</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root{
+  --bg:#01060d; --white:#f4f7fb; --ice:#d9ecff;
+  --blue:#56bfff; --blue2:#2b91d5; --blue3:#123f68;
+  --muted:#6f94b5; --line:#174568; --deep:#020b15;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg)}
+body{
+  color:var(--white);
+  font-family:"IBM Plex Mono","Courier New",monospace;
+  overflow-x:hidden;
+  background:
+    radial-gradient(ellipse at 50% 35%,rgba(13,55,92,.24),transparent 50%),
+    linear-gradient(180deg,#020a14 0%,#01060d 70%,#00040a 100%);
+}
+body:before{
+  content:"";position:fixed;inset:0;z-index:90;pointer-events:none;
+  background:
+    repeating-linear-gradient(0deg,rgba(255,255,255,.026) 0 1px,transparent 1px 4px),
+    radial-gradient(ellipse at center,transparent 44%,rgba(0,0,0,.48) 100%);
+}
+body:after{
+  content:"";position:fixed;inset:0;z-index:89;pointer-events:none;
+  background:linear-gradient(90deg,rgba(0,0,0,.38),transparent 14%,transparent 86%,rgba(0,0,0,.38));
+}
+
+/* Home-only liquid canopy */
+.liquid{
+  position:fixed;display:block;z-index:1;pointer-events:none;
+  left:0;right:0;top:0;height:360px;opacity:.86;
+  background:
+    radial-gradient(ellipse 260px 95px at 3% 3%,#06294a 0 62%,transparent 66%),
+    radial-gradient(ellipse 290px 110px at 19% 2%,#062d50 0 62%,transparent 66%),
+    radial-gradient(ellipse 330px 115px at 38% 3%,#07345a 0 62%,transparent 66%),
+    radial-gradient(ellipse 300px 105px at 58% 2%,#062e51 0 62%,transparent 66%),
+    radial-gradient(ellipse 340px 115px at 78% 3%,#07345a 0 62%,transparent 66%),
+    radial-gradient(ellipse 260px 100px at 97% 4%,#062b4c 0 62%,transparent 66%);
+  filter:drop-shadow(0 8px 16px rgba(0,0,0,.55));
+}
+.liquid:after{
+  content:"";position:absolute;left:0;right:0;top:45px;height:310px;
+  background:
+    radial-gradient(ellipse 43px 185px at 4% 10%,#062b4c 0 55%,transparent 59%),
+    radial-gradient(ellipse 33px 145px at 17% 10%,#072e51 0 55%,transparent 59%),
+    radial-gradient(ellipse 50px 215px at 33% 10%,#07345a 0 55%,transparent 59%),
+    radial-gradient(ellipse 36px 155px at 48% 10%,#062d4e 0 55%,transparent 59%),
+    radial-gradient(ellipse 53px 230px at 66% 10%,#07365c 0 55%,transparent 59%),
+    radial-gradient(ellipse 35px 155px at 82% 10%,#062c4d 0 55%,transparent 59%),
+    radial-gradient(ellipse 28px 125px at 96% 10%,#07325a 0 55%,transparent 59%);
+}
+
+/* Main composition */
+.wrap{
+  width:min(1400px,92vw);min-height:100vh;margin:auto;
+  padding:20px 0 28px;position:relative;z-index:3;
+}
+.top{
+  height:72px;display:flex;justify-content:space-between;align-items:flex-start;
+  border-bottom:1px solid rgba(48,111,157,.7);padding:0 0 16px;
+  position:relative;z-index:5;
+}
+.logo{
+  color:var(--white);font-family:"Barlow Condensed",Arial,sans-serif;
+  font-size:29px;font-weight:400;letter-spacing:9px;line-height:1;
+}
+.logo:after{
+  content:"BLOCKCHAIN CLUB  •  SOCIAL DEDUCTION SYSTEM";
+  display:block;color:var(--muted);
+  font:500 9px "IBM Plex Mono";letter-spacing:3.2px;margin-top:9px;
+}
+.status{
+  margin-top:3px;padding:11px 17px;border:1px solid var(--blue3);
+  color:var(--blue);font:500 9px "IBM Plex Mono";letter-spacing:3px;
+  min-width:186px;text-align:center;
+}
+.status:before{content:"● ";color:#319fe9}
+
+.screen{display:none;animation:fade .45s ease}
+.screen.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* Exact-ish hero proportions */
+#home{padding-top:0}
+#home .card:first-child{
+  height:735px;margin-top:0;padding:0;
+  border:0;border-radius:0;box-shadow:none;background:transparent;
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+  text-align:center;position:relative;overflow:hidden;
+}
+#home .card:first-child:before{
+  content:"";position:absolute;left:16.5%;right:16.5%;top:176px;bottom:150px;
+  border:1px solid rgba(64,134,179,.68);pointer-events:none;
+}
+#home .card:first-child:after{
+  content:"";position:absolute;left:16.5%;right:16.5%;top:193px;bottom:167px;
+  border-left:1px solid rgba(55,113,155,.28);
+  border-right:1px solid rgba(55,113,155,.28);
+  pointer-events:none;
+}
+.eyebrow{
+  position:relative;z-index:2;margin-top:132px;
+  color:var(--blue);font:500 11px "IBM Plex Mono";
+  letter-spacing:8px;
+}
+h1{
+  position:relative;z-index:2;
+  margin:43px 0 37px;
+  color:var(--white);
+  font-family:"Barlow Condensed",Arial,sans-serif;
+  font-size:clamp(5.2rem,9.2vw,8.2rem);
+  font-weight:500;line-height:.78;letter-spacing:15px;
+  text-transform:uppercase;
+  text-shadow:0 0 18px rgba(255,255,255,.08);
+}
+.sub{
+  position:relative;z-index:2;
+  color:var(--blue);font:500 11px "IBM Plex Mono";
+  line-height:2.8;letter-spacing:4px;
+}
+.actions{
+  position:relative;z-index:5;
+  display:flex;justify-content:center;gap:27px;margin-top:31px;
+}
+button,input,select{font:inherit}
+button{
+  border:1px solid var(--blue2);background:rgba(2,13,24,.74);color:var(--white);
+  min-width:286px;padding:17px 28px;border-radius:2px;
+  font:500 12px "IBM Plex Mono";letter-spacing:5px;
+  cursor:pointer;transition:.18s;
+}
+button:hover{
+  border-color:var(--blue);background:rgba(12,43,68,.82);
+  box-shadow:0 0 25px rgba(54,165,229,.15);
+}
+button.primary{
+  background:linear-gradient(180deg,#55b7f4,#328fd0);
+  border-color:#67c5ff;color:#02101a;
+}
+button.primary:hover{background:#6ac8ff}
+button.danger{background:transparent;border-color:#2b6b98;color:#b8ddf6}
+
+/* Side rails on home */
+#home .grid{
+  position:absolute;z-index:4;left:0;right:0;top:372px;
+  display:block;margin:0;pointer-events:none;
+}
+#home .grid .card{
+  position:absolute;background:transparent;border:0;box-shadow:none;padding:0;
+  width:130px;text-align:left;
+}
+#home .grid .card:nth-child(1){left:0}
+#home .grid .card:nth-child(2){display:none}
+#home .grid .card:nth-child(3){right:0}
+#home .grid .card:before{display:none}
+#home .grid .card h3{
+  color:var(--muted);font:500 9px "IBM Plex Mono";
+  letter-spacing:3px;line-height:3.2;text-transform:uppercase;
+}
+#home .grid .card p{
+  color:#537a9d;font:500 9px "IBM Plex Mono";
+  letter-spacing:3px;line-height:3.2;
+}
+#home .grid .card:nth-child(1):after{
+  content:"—";display:block;color:#4e7c9f;margin-top:9px;
+}
+#home .grid .card:nth-child(3):after{
+  content:"—";display:block;color:#4e7c9f;margin-top:9px;
+}
+#home .grid .card:nth-child(3){text-align:left}
+
+/* Footer */
+#home:after{
+  content:"BYTEVAULT                         TRUST NOTHING EXCEPT THE EVIDENCE";
+  display:block;border-top:1px solid rgba(54,104,142,.7);
+  padding-top:17px;color:#4f84aa;
+  font:500 9px "IBM Plex Mono";letter-spacing:3px;
+  white-space:pre;position:relative;z-index:5;
+}
+
+/* Inner screens retain same visual language */
+.card{
+  background:linear-gradient(145deg,rgba(6,19,32,.97),rgba(2,8,15,.98));
+  border:1px solid var(--line);border-radius:1px;
+  box-shadow:0 18px 60px rgba(0,0,0,.4);padding:30px;
+}
+.center{text-align:center}
+h2{
+  color:var(--white);font:500 29px "Barlow Condensed";
+  letter-spacing:5px;margin-bottom:10px;
+}
+h3{color:var(--ice);font:500 20px "Barlow Condensed";letter-spacing:3px}
+label{display:block;color:var(--muted);font-size:9px;letter-spacing:3px;margin:18px 0 8px}
+input,select{
+  width:100%;background:#020a12;color:var(--white);
+  border:1px solid var(--line);border-radius:1px;padding:13px;outline:none;
+}
+input:focus,select:focus{border-color:var(--blue)}
+.notice{
+  padding:15px;border-left:2px solid var(--blue);background:#061726;
+  color:#9bb8cf;margin:18px 0;line-height:1.7;font-size:11px;
+}
+.error{color:#7dcfff;margin-top:10px;font-size:11px}
+.choice{
+  padding:20px;border:1px solid var(--line);background:#061421;
+  cursor:pointer;transition:.18s;
+}
+.choice:hover{border-color:var(--blue);background:#092239}
+.choice.selected{border-color:var(--blue);background:#0a2942}
+.grid:not(#home .grid){display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-top:20px}
+.clue{
+  color:var(--white);font:400 clamp(25px,4vw,42px) "Barlow Condensed";
+  line-height:1.25;letter-spacing:1px;margin:30px 0;
+}
+.secret{border:1px dashed var(--blue2);padding:9px;color:var(--blue);font-size:9px;letter-spacing:3px}
+.scoretable{width:100%;border-collapse:collapse;margin-top:18px;font-size:11px}
+.scoretable th,.scoretable td{padding:12px;border-bottom:1px solid #12304a;text-align:left}
+.scoretable th{color:var(--blue);font-size:9px;letter-spacing:3px}
+.tag{font-size:8px;padding:4px 7px;border:1px solid var(--line);color:var(--muted)}
+.tag.imp{color:#8fd7ff;border-color:var(--blue2)}
+
+
+/* Supplied landing artwork: the image itself is the complete home screen. */
+body:not(.home-liquid) .liquid{
+  display:none !important;
+}
+body:not(.home-liquid):before,
+body:not(.home-liquid):after{
+  display:none !important;
+}
+body:not(.home-liquid){
+  background:
+    radial-gradient(ellipse at 50% 35%,rgba(13,55,92,.16),transparent 52%),
+    linear-gradient(180deg,#020914 0%,#01060d 100%);
+}
+body.home-liquid{
+  background:#00040a;
+  overflow:hidden;
+}
+body.home-liquid:before,
+body.home-liquid:after,
+body.home-liquid .liquid{
+  display:none !important;
+}
+body.home-liquid .wrap{
+  width:100%;
+  min-height:100vh;
+  margin:0;
+  padding:0;
+}
+body.home-liquid .top{
+  display:none;
+}
+body.home-liquid #home{
+  position:fixed;
+  inset:0;
+  width:100vw;
+  height:100vh;
+  padding:0;
+  margin:0;
+  overflow:hidden;
+}
+body.home-liquid #home .landing-art{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+}
+body.home-liquid #home .landing-art > img{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center center;
+}
+body.home-liquid #home .home-admin-hit{
+  position:absolute;
+  left:39.99%;
+  top:74.29%;
+  width:18.40%;
+  height:6.59%;
+  min-width:0;
+  padding:0;
+  margin:0;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+  cursor:pointer;
+}
+body.home-liquid #home .home-admin-hit:hover{
+  background:transparent !important;
+  border:0 !important;
+  outline:none !important;
+  box-shadow:none !important;
+}
+body.home-liquid #home .home-admin-hit:focus-visible{
+  outline:none !important;
+}
+@media(max-width:850px){
+  body.home-liquid #home .landing-art > img{
+    object-fit:cover;
+    object-position:center center;
+  }
+  body.home-liquid #home .home-admin-hit{
+    left:34%;
+    top:73%;
+    width:32%;
+    height:9%;
+  }
+}
+
+body.home-liquid #home .grid,
+body.home-liquid #home:after,
+body.home-liquid #home .card:first-child:before,
+body.home-liquid #home .card:first-child:after{
+  display:none !important;
+}
+
+@media(max-width:850px){
+  .wrap{width:94vw}
+  .top{height:64px}
+  .logo{font-size:22px;letter-spacing:6px}
+  .status{display:none}
+  #home .card:first-child{height:650px}
+  #home .card:first-child:before,#home .card:first-child:after{left:3%;right:3%}
+  h1{font-size:4.1rem;letter-spacing:8px}
+  .sub{font-size:9px;letter-spacing:2px;line-height:2}
+  .actions{gap:10px;flex-direction:column}
+  button{min-width:240px}
+  #home .grid .card{display:none}
+}
+
+/* FINAL PAGE-SPECIFIC BACKGROUND RULES */
+body:not(.home-liquid) .liquid,
+body:not(.home-liquid) .liquid::before,
+body:not(.home-liquid) .liquid::after {
+  display: none !important;
+}
+
+body:not(.home-liquid) {
+  background:
+    radial-gradient(ellipse at 50% 35%, rgba(13,55,92,.12), transparent 52%),
+    linear-gradient(180deg, #020a14 0%, #01060d 70%, #00040a 100%) !important;
+}
+
+body:not(.home-liquid)::before,
+body:not(.home-liquid)::after {
+  display: block;
+  pointer-events: none;
+}
+
+/* Landing-page Admin Login: absolutely no hover outline/border/glow/fill. */
+body.home-liquid #home .home-admin-hit,
+body.home-liquid #home .home-admin-hit:hover,
+body.home-liquid #home .home-admin-hit:active,
+body.home-liquid #home .home-admin-hit:focus,
+body.home-liquid #home .home-admin-hit:focus-visible {
+  background: transparent !important;
+  border: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+
+/* Mobile landing-page treatment: preserve the complete wide artwork. */
+@media (max-width: 600px){
+  body.home-liquid #home{
+    background:#00040a;
+    overflow:hidden;
+  }
+
+  body.home-liquid #home .landing-art{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:100%;
+    height:100dvh;
+    background:#00040a;
+  }
+
+  body.home-liquid #home .landing-art > img{
+    width:100%;
+    height:auto;
+    max-width:none;
+    object-fit:contain;
+    object-position:center center;
+  }
+
+  /* Keep the invisible Admin Login hitbox aligned to the visible button
+     in the full-image mobile composition. */
+  body.home-liquid #home .home-admin-hit{
+    left:34%;
+    top:72.8%;
+    width:32%;
+    height:7%;
+  }
+}
+
+</style>
+</head>
+<body class="home-liquid"><div class="liquid"></div>
+<div class="wrap">
+  <div class="top"><div class="logo">BYTEVAULT</div><div class="status" id="status">SINGLE DEVICE</div></div>
+
+  <section id="home" class="screen active">
+    <div class="landing-art">
+      <img src="./image.png" alt="BYTEVAULT Imposter landing page">
+      <button class="home-admin-hit" aria-label="Admin Login" onclick="show('login')"></button>
+    </div>
+  </section>
+
+  <section id="login" class="screen"><div class="card">
+    <div class="eyebrow">ADMIN ACCESS</div><h2>Game setup</h2>
+    <label>ADMIN KEY</label><input id="adminKey" type="password" placeholder="Enter admin key">
+    <div id="loginErr" class="error"></div><div class="actions"><button onclick="show('home')">BACK</button><button class="primary" onclick="login()">UNLOCK</button></div>
+  </div></section>
+
+  <section id="setup" class="screen"><div class="card">
+    <div class="eyebrow">01  CASE CONTROL</div>
+    <h2>Select investigation</h2>
+    <p class="sub">Choose which mystery the players will investigate.</p>
+    <label>CASE FILE</label>
+    <select id="caseSelect">
+      <option value="0">CASE 01 — THE MIDNIGHT BREACH</option>
+      <option value="1">CASE 02 — THE VANISHED KEY</option>
+    </select>
+
+    <div class="eyebrow" style="margin-top:28px">02  PLAYERS</div>
+    <h2>How many players?</h2>
+    <p class="sub">Enter a whole number from 1–6.</p>
+    <input id="count" type="number" min="1" max="6" step="1" placeholder="Number of players">
+    <div id="countErr" class="error"></div>
+    <div class="actions"><button onclick="show('login')">BACK</button><button class="primary" onclick="makeNames()">CONTINUE</button></div>
+  </div></section>
+
+  <section id="names" class="screen"><div class="card">
+    <div class="eyebrow">02  ROSTER</div><h2>Enter player names</h2><div id="nameFields"></div>
+    <div id="nameErr" class="error"></div><div class="actions"><button onclick="show('setup')">BACK</button><button class="primary" onclick="startGame()">START ROUND 1</button></div>
+  </div></section>
+
+  <section id="round" class="screen"><div class="card center">
+    <div class="eyebrow" id="roundEyebrow">ROUND 1  PUBLIC TOPIC</div>
+    <h2 id="roundTitle"></h2><p class="sub">Everyone may know the topic. <b>No player's private clue is shown here.</b></p>
+    <div class="notice">The device will now be passed one player at a time. Each player sees ONLY their own role-based clue.</div>
+    <div class="actions"><button class="primary" onclick="startReading()">START PRIVATE CLUE PASS</button></div>
+  </div></section>
+
+  <section id="readPass" class="screen"><div class="card center">
+    <div class="eyebrow">PRIVATE CLUE PASS</div><div class="progress" id="readProgress"></div>
+    <h2 id="readPassPlayer"></h2><p class="sub">Take the device. Make sure nobody else is looking.</p>
+    <div class="actions"><button class="primary" onclick="openPrivateClue()">I HAVE THE DEVICE</button></div>
+  </div></section>
+
+  <section id="read" class="screen"><div class="card center">
+    <div class="secret">PRIVATE  DO NOT SHOW OTHER PLAYERS</div>
+    <h2 id="readPlayer"></h2><div id="roleHint" class="progress"></div>
+    <div class="clue" id="privateClue"></div>
+    <p class="sub">Read your clue carefully. Do not tell anyone what you saw.</p>
+    <div class="actions"><button class="primary" onclick="doneReading()">DONE READING</button></div>
+  </div></section>
+
+  <section id="readDone" class="screen"><div class="card center">
+    <div class="eyebrow">CLUE SECURED</div><h2 id="readDoneText"></h2><p class="sub">Pass the device without discussing your clue.</p>
+    <div class="actions"><button class="primary" onclick="nextReader()">PASS DEVICE</button></div>
+  </div></section>
+
+  <section id="pass" class="screen"><div class="card center">
+    <div class="eyebrow">ALL CLUES READ  VOTING UNLOCKED</div><div class="progress" id="voteProgress"></div>
+    <h2 id="passPlayer"></h2><p class="sub">Take the device privately. Your vote will not be shown after you submit it.</p>
+    <div class="actions"><button class="primary" onclick="openVote()">I HAVE THE DEVICE</button></div>
+  </div></section>
+
+  <section id="vote" class="screen"><div class="card">
+    <div class="eyebrow">PRIVATE VOTE</div><h2 id="voteHeading"></h2><p class="sub">Choose whose evidence you believe is false.</p>
+    <div id="voteChoices" class="grid"></div><div id="voteErr" class="error"></div>
+    <div class="actions"><button class="primary" onclick="submitVote()">SUBMIT SECRET VOTE</button></div>
+  </div></section>
+
+  <section id="between" class="screen"><div class="card center">
+    <div class="eyebrow">VOTE LOCKED</div><h2>Pass device</h2><p class="sub">Your vote is hidden. Do not show the next player what you selected.</p>
+    <div class="actions"><button class="primary" onclick="afterVote()">CONTINUE</button></div>
+  </div></section>
+
+  <section id="finalStart" class="screen"><div class="card center">
+    <div class="eyebrow">ALL FOUR EVIDENCE FILES COMPLETE</div><h2>FINAL VOTE</h2><p class="sub">One last private pass to identify the false file. Everyone votes on the player they believe is the imposter.</p>
+    <div class="actions"><button class="primary" onclick="startFinalVote()">START FINAL VOTE</button></div>
+  </div></section>
+
+  <section id="finalPass" class="screen"><div class="card center">
+    <div class="eyebrow">FINAL PRIVATE VOTE</div><div class="progress" id="finalProgress"></div>
+    <h2 id="finalPassPlayer"></h2><p class="sub">Take the device. Your selection is secret.</p>
+    <div class="actions"><button class="primary" onclick="openFinalVote()">I HAVE THE DEVICE</button></div>
+  </div></section>
+
+  <section id="finalVote" class="screen"><div class="card">
+    <div class="eyebrow">FINAL PRIVATE VOTE</div><h2 id="finalHeading"></h2>
+    <div id="finalChoices" class="grid"></div><div id="finalErr" class="error"></div>
+    <div class="actions"><button class="primary" onclick="submitFinalVote()">SUBMIT FINAL VOTE</button></div>
+  </div></section>
+
+  <section id="reveal" class="screen"><div class="card">
+    <div class="eyebrow">GAME COMPLETE</div><h2>THE REVEAL</h2>
+    <div class="notice" id="revealBox"></div>
+    <h3>Scores</h3><table class="scoretable"><thead><tr><th>PLAYER</th><th>ROLE</th><th>ROUND POINTS</th><th>FINAL</th><th>TOTAL</th></tr></thead><tbody id="scores"></tbody></table>
+    <h3>Voting history</h3><div id="history"></div>
+    <div class="actions"><button class="primary" onclick="location.reload()">NEW GAME</button></div>
+  </div></section>
+</div>
+
+<script>
+const KEY="Mysterygameadmin";
+const CASES=[
+  {
+    title:"THE MIDNIGHT BREACH",
+    intro:"At 11:47 PM, the internal server went offline. VAULT-7 had been accessed shortly before the shutdown. Everyone was present, but one player's evidence is subtly different.",
+    rounds:[
+      {
+        title:"ACCESS LOG",
+        clues:[
+          "The access log records VAULT-7 being opened at 11:32 PM from the second-floor lab.",
+          "The administrator card used for VAULT-7 was logged at 11:32 PM and assigned to the second-floor lab terminal.",
+          "The security system places the VAULT-7 access at 11:32 PM and lists the second-floor lab as the source.",
+          "A card-swipe record shows VAULT-7 was entered at 11:32 PM through the second-floor lab access point.",
+          "The audit trail timestamps the VAULT-7 entry at 11:32 PM and identifies the second-floor lab as its origin.",
+          "The access report confirms a 11:32 PM VAULT-7 entry, with the second-floor lab recorded as the location."
+        ],
+        imposterClues:[
+          "The access log records VAULT-7 being opened at 11:32 PM from the first-floor lab.",
+          "The administrator card used for VAULT-7 was logged at 11:32 PM and assigned to the first-floor lab terminal.",
+          "The security system places the VAULT-7 access at 11:32 PM and lists the first-floor lab as the source.",
+          "A card-swipe record shows VAULT-7 was entered at 11:32 PM through the first-floor lab access point.",
+          "The audit trail timestamps the VAULT-7 entry at 11:32 PM and identifies the first-floor lab as its origin.",
+          "The access report confirms a 11:32 PM VAULT-7 entry, with the first-floor lab recorded as the location."
+        ]
+      },
+      {
+        title:"CAMERA",
+        clues:[
+          "The hallway camera went offline from 11:29 PM to 11:35 PM, leaving the passage unidentified.",
+          "Camera diagnostics show a six-minute outage beginning at 11:29 PM; no person can be identified in that interval.",
+          "The recording skips from 11:28 PM to 11:36 PM, so the hallway activity during the outage is unknown.",
+          "The security feed contains no usable image between 11:29 PM and 11:35 PM.",
+          "The camera status log marks 11:29–11:35 PM as a blind window with no readable faces or figures.",
+          "The hallway footage is unavailable for exactly six minutes, and the archived frames cannot identify anyone."
+        ],
+        imposterClues:[
+          "The hallway camera went offline from 11:29 PM to 11:35 PM, but a dark figure carrying a laptop is visible entering the lab.",
+          "Camera diagnostics show a six-minute outage beginning at 11:29 PM; a person with a laptop can be seen entering the lab.",
+          "The recording skips from 11:28 PM to 11:36 PM, but one archived frame shows a dark figure entering the lab.",
+          "The security feed contains no usable image between 11:29 PM and 11:35 PM except for a silhouette carrying a laptop toward the lab.",
+          "The camera status log marks 11:29–11:35 PM as a blind window, yet a dark figure with a laptop appears at the lab entrance.",
+          "The hallway footage is unavailable for six minutes, although one frame appears to show someone carrying a laptop into the lab."
+        ]
+      },
+      {
+        title:"THE USB",
+        clues:[
+          "A USB drive was recovered beside the server and contains one encrypted file named V7_BACKUP.",
+          "The recovered USB is 16 GB and its only visible file is an encrypted archive called V7_BACKUP.",
+          "Forensic notes list a single encrypted file on the USB; its filename is V7_BACKUP.",
+          "The drive's directory contains only V7_BACKUP, and the file is marked encrypted.",
+          "Investigators found one encrypted item on the recovered drive, labelled V7_BACKUP.",
+          "The USB inventory records one encrypted file, V7_BACKUP, with no other files visible."
+        ],
+        imposterClues:[
+          "A USB drive was recovered beside the server and contains three encrypted files, including V7_BACKUP.",
+          "The recovered USB is 16 GB and its directory shows three encrypted archives, one of them named V7_BACKUP.",
+          "Forensic notes list three encrypted files on the USB; V7_BACKUP is only one of them.",
+          "The drive's directory contains V7_BACKUP plus two additional encrypted files.",
+          "Investigators found three encrypted items on the recovered drive, with V7_BACKUP among them.",
+          "The USB inventory records three encrypted files rather than a single file; one is V7_BACKUP."
+        ]
+      },
+      {
+        title:"THE TIMELINE",
+        clues:[
+          "The server shutdown occurred four minutes after the VAULT-7 access.",
+          "The incident timeline places the server shutdown at 11:36 PM, four minutes after the access.",
+          "The monitoring system shows VAULT-7 access first, followed by the shutdown four minutes later.",
+          "The event log records a four-minute gap between the VAULT-7 entry and the server going offline.",
+          "The shutdown timestamp is exactly four minutes after the recorded VAULT-7 access.",
+          "Investigators reconstructed a four-minute interval from the VAULT-7 access to the server shutdown."
+        ],
+        imposterClues:[
+          "The server shutdown occurred two minutes after the VAULT-7 access.",
+          "The incident timeline places the server shutdown at 11:34 PM, two minutes after the access.",
+          "The monitoring system shows VAULT-7 access first, followed by the shutdown two minutes later.",
+          "The event log records a two-minute gap between the VAULT-7 entry and the server going offline.",
+          "The shutdown timestamp is exactly two minutes after the recorded VAULT-7 access.",
+          "Investigators reconstructed a two-minute interval from the VAULT-7 access to the server shutdown."
+        ]
+      }
+    ]
+  },
+  {
+    title:"THE VANISHED KEY",
+    intro:"At 8:15 PM, the event coordinator discovers that a key to the restricted equipment room has disappeared. Inside is a prototype device for tomorrow's event. One player's evidence does not belong to the real timeline.",
+    rounds:[
+      {
+        title:"THE KEY LOG",
+        clues:[
+          "The equipment-room key was signed out at 7:40 PM.",
+          "The key register shows the restricted-room key leaving the desk at 7:40 PM.",
+          "A handwritten entry in the key ledger records the equipment-room key at 7:40 PM.",
+          "The electronic key cabinet reports a checkout time of 7:40 PM for the restricted-room key.",
+          "The coordinator's log lists 7:40 PM as the time the equipment-room key was signed out.",
+          "The access sheet places the key checkout at 7:40 PM, before the room was opened."
+        ],
+        imposterClues:[
+          "The equipment-room key was signed out at 7:25 PM.",
+          "The key register shows the restricted-room key leaving the desk at 7:25 PM.",
+          "A handwritten entry in the key ledger records the equipment-room key at 7:25 PM.",
+          "The electronic key cabinet reports a checkout time of 7:25 PM for the restricted-room key.",
+          "The coordinator's log lists 7:25 PM as the time the equipment-room key was signed out.",
+          "The access sheet places the key checkout at 7:25 PM, before the room was opened."
+        ]
+      },
+      {
+        title:"THE DOOR",
+        clues:[
+          "The equipment room was opened once at 8:03 PM.",
+          "The door controller records a single successful opening, timestamped 8:03 PM.",
+          "Security logs show one entry event for the equipment room at 8:03 PM.",
+          "The room's access panel registered one door opening, occurring at 8:03 PM.",
+          "The door sensor history contains only one open event, at 8:03 PM.",
+          "The equipment-room audit trail shows the door opened once and no earlier opening before 8:03 PM."
+        ],
+        imposterClues:[
+          "The equipment room was opened twice: once at 7:58 PM and again at 8:03 PM.",
+          "The door controller records two successful openings, timestamped 7:58 PM and 8:03 PM.",
+          "Security logs show two entry events for the equipment room, one at 7:58 PM and another at 8:03 PM.",
+          "The room's access panel registered openings at both 7:58 PM and 8:03 PM.",
+          "The door sensor history contains two open events: one at 7:58 PM and one at 8:03 PM.",
+          "The equipment-room audit trail shows an earlier opening at 7:58 PM followed by another at 8:03 PM."
+        ]
+      },
+      {
+        title:"THE MESSAGE",
+        clues:[
+          "At 8:06 PM, someone sent the message: \"It's done.\"",
+          "The message archive records an 8:06 PM text saying, \"It's done.\"",
+          "A phone backup shows a message sent at 8:06 PM with the wording, \"It's done.\"",
+          "The communications log preserves an 8:06 PM message that reads, \"It's done.\"",
+          "The sender history shows an 8:06 PM message containing the phrase, \"It's done.\"",
+          "The recovered chat transcript has an 8:06 PM entry stating, \"It's done.\""
+        ],
+        imposterClues:[
+          "At 8:06 PM, someone sent the message: \"It's safe.\"",
+          "The message archive records an 8:06 PM text saying, \"It's safe.\"",
+          "A phone backup shows a message sent at 8:06 PM with the wording, \"It's safe.\"",
+          "The communications log preserves an 8:06 PM message that reads, \"It's safe.\"",
+          "The sender history shows an 8:06 PM message containing the phrase, \"It's safe.\"",
+          "The recovered chat transcript has an 8:06 PM entry stating, \"It's safe.\""
+        ]
+      },
+      {
+        title:"THE CAMERA",
+        clues:[
+          "The corridor camera shows nobody entering the equipment room between 7:45 PM and 8:00 PM.",
+          "Review of the corridor feed finds no person entering the equipment room from 7:45 PM through 8:00 PM.",
+          "The camera archive is clear between 7:45 PM and 8:00 PM, with no visible entry into the restricted room.",
+          "Security footage shows the corridor empty of anyone entering the equipment room during the 7:45–8:00 PM window.",
+          "The surveillance review records no equipment-room entry between 7:45 PM and 8:00 PM.",
+          "The corridor recording contains no entry into the equipment room during the fifteen minutes before 8:00 PM."
+        ],
+        imposterClues:[
+          "The corridor camera shows someone entering the equipment room at approximately 7:57 PM.",
+          "Review of the corridor feed shows a person entering the equipment room at about 7:57 PM.",
+          "The camera archive contains a visible entry into the restricted room at approximately 7:57 PM.",
+          "Security footage shows a person crossing into the equipment room around 7:57 PM.",
+          "The surveillance review records an equipment-room entry at roughly 7:57 PM.",
+          "The corridor recording shows someone entering the equipment room shortly before 8:00 PM, at about 7:57 PM."
+        ]
+      }
+    ]
+  }
+];
+
+const S={count:0,players:[],imposter:-1,caseIndex:0,round:0,readIndex:0,voter:0,selected:null,roundVotes:[],finalVotes:[],finalVoter:0,finalSelected:null};
+
+function $(id){return document.getElementById(id)}
+function show(id){document.body.classList.toggle('home-liquid', id==='home');document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));$(id).classList.add("active");window.scrollTo(0,0)}
+function login(){if($("adminKey").value===KEY){$("loginErr").textContent="";show("setup")}else $("loginErr").textContent="Incorrect admin key."}
+function makeNames(){
+  const n=Number($("count").value);
+  if(!Number.isInteger(n)||n<1||n>6){$("countErr").textContent="Enter a whole number from 1 to 6.";return}
+  $("countErr").textContent="";S.count=n;
+  S.caseIndex=Number($("caseSelect").value);
+  $("nameFields").innerHTML=Array.from({length:n},(_,i)=>`<label>PLAYER ${i+1}</label><input class="pname" placeholder="Player ${i+1}">`).join("");
+  show("names");
+}
+function startGame(){
+  const inputs=[...document.querySelectorAll(".pname")], names=inputs.map(x=>x.value.trim());
+  if(names.some(x=>!x)){ $("nameErr").textContent="Please enter every player name.";return }
+  const lower=names.map(x=>x.toLowerCase());
+  if(new Set(lower).size!==names.length){$("nameErr").textContent="Player names must be unique.";return}
+  $("nameErr").textContent="";S.players=names;S.imposter=Math.floor(Math.random()*S.count);S.round=0;S.roundVotes=[];S.finalVotes=[];
+  showRound();
+}
+function showRound(){
+  const c=CASES[S.caseIndex];
+  $("roundEyebrow").textContent=`ROUND ${S.round+1}  ${c.rounds[S.round].title}`;
+  $("roundTitle").textContent=c.rounds[S.round].title;
+  $("round").querySelector(".sub").innerHTML=`${c.intro}<br><b>No player's private clue is shown here.</b>`;
+  $("round").querySelector(".notice").textContent=
+    "The device will now be passed one player at a time. Each player sees ONLY their own evidence. Nobody is told whether their evidence is the false file.";
+  show("round");
+}
+function startReading(){S.readIndex=0;showReadPass()}
+function showReadPass(){
+  $("readProgress").textContent=`PLAYER ${S.readIndex+1} OF ${S.count}`;
+  $("readPassPlayer").textContent=S.players[S.readIndex];
+  show("readPass");
+}
+function openPrivateClue(){
+  const c=CASES[S.caseIndex].rounds[S.round];
+  $("readPlayer").textContent=S.players[S.readIndex];
+  $("roleHint").textContent="CLASSIFIED EVIDENCE // YOUR FILE";
+  // Every player gets a different clue. The imposter gets the false variant
+  // corresponding to their player index; everyone else gets their unique true clue.
+  $("privateClue").textContent=(S.readIndex===S.imposter)
+    ? c.imposterClues[S.readIndex]
+    : c.clues[S.readIndex];
+  show("read");
+}
+function doneReading(){
+  $("readDoneText").textContent=`${S.players[S.readIndex]}'s clue is secured.`;
+  show("readDone");
+}
+function nextReader(){
+  S.readIndex++;
+  if(S.readIndex<S.count) showReadPass();
+  else beginVote();
+}
+function beginVote(){S.voter=0;passVote()}
+function passVote(){
+  $("voteProgress").textContent=`PLAYER ${S.voter+1} OF ${S.count}  ROUND ${S.round+1}`;
+  $("passPlayer").textContent=S.players[S.voter];
+  show("pass");
+}
+function openVote(){
+  S.selected=null;$("voteErr").textContent="";
+  $("voteHeading").textContent=`${S.players[S.voter]} — make your private choice`;
+  $("voteChoices").innerHTML=S.players.map((p,i)=>`<div class="choice" data-i="${i}" onclick="selectChoice(${i})">${escapeHtml(p)}</div>`).join("");
+  show("vote");
+}
+function selectChoice(i){S.selected=i;document.querySelectorAll("#voteChoices .choice").forEach(x=>x.classList.toggle("selected",Number(x.dataset.i)===i))}
+function submitVote(){
+  if(S.selected===null){$("voteErr").textContent="Select a player first.";return}
+  if(!S.roundVotes[S.round])S.roundVotes[S.round]=[];
+  S.roundVotes[S.round][S.voter]=S.selected;
+  show("between");
+}
+function afterVote(){
+  S.voter++;
+  if(S.voter<S.count)passVote();
+  else if(S.round<3){S.round++;showRound()}
+  else show("finalStart");
+}
+function startFinalVote(){S.finalVoter=0;S.finalVotes=[];showFinalPass()}
+function showFinalPass(){
+  $("finalProgress").textContent=`PLAYER ${S.finalVoter+1} OF ${S.count}`;
+  $("finalPassPlayer").textContent=S.players[S.finalVoter];show("finalPass");
+}
+function openFinalVote(){
+  S.finalSelected=null;$("finalErr").textContent="";
+  $("finalHeading").textContent=`${S.players[S.finalVoter]} — final secret vote`;
+  $("finalChoices").innerHTML=S.players.map((p,i)=>`<div class="choice" data-i="${i}" onclick="selectFinal(${i})">${escapeHtml(p)}</div>`).join("");
+  show("finalVote");
+}
+function selectFinal(i){S.finalSelected=i;document.querySelectorAll("#finalChoices .choice").forEach(x=>x.classList.toggle("selected",Number(x.dataset.i)===i))}
+function submitFinalVote(){
+  if(S.finalSelected===null){$("finalErr").textContent="Select a player first.";return}
+  S.finalVotes[S.finalVoter]=S.finalSelected;
+  S.finalVoter++;
+  if(S.finalVoter<S.count)showFinalPass();else reveal();
+}
+function reveal(){
+  const totals=Array(S.count).fill(0), roundPts=Array(S.count).fill(0), finalPts=Array(S.count).fill(0);
+  for(let r=0;r<4;r++)for(let v=0;v<S.count;v++)if(S.roundVotes[r]?.[v]===S.imposter)roundPts[v]+=2;
+  for(let v=0;v<S.count;v++)if(S.finalVotes[v]===S.imposter)finalPts[v]=5;
+  for(let i=0;i<S.count;i++)totals[i]=roundPts[i]+finalPts[i];
+  $("revealBox").innerHTML=`<div class="big">The false evidence belonged to <b>${escapeHtml(S.players[S.imposter])}</b>.</div><p>The revealed player was unknowingly given the false version of each evidence file. Scoring: +2 for each correct round vote, +5 for a correct final vote.</p>`;
+  const order=[...Array(S.count).keys()].sort((a,b)=>totals[b]-totals[a]);
+  $("scores").innerHTML=order.map(i=>`<tr><td>${escapeHtml(S.players[i])}</td><td><span class="tag ${i===S.imposter?"imp":""}">${i===S.imposter?"IMPOSTER":"INVESTIGATOR"}</span></td><td>${roundPts[i]}</td><td>${finalPts[i]}</td><td><b>${totals[i]}</b></td></tr>`).join("");
+  $("history").innerHTML=Array.from({length:4},(_,r)=>`<div class="notice"><b>Round ${r+1}:</b> ${S.players.map((p,v)=>`${escapeHtml(p)} → ${escapeHtml(S.players[S.roundVotes[r][v]])}`).join(" &nbsp;|&nbsp; ")}</div>`).join("")+
+    `<div class="notice"><b>Final:</b> ${S.players.map((p,v)=>`${escapeHtml(p)} → ${escapeHtml(S.players[S.finalVotes[v]])}`).join(" &nbsp;|&nbsp; ")}</div>`;
+  show("reveal");
+}
+function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+</script>
+</body>
+</html>
